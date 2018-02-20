@@ -1,0 +1,45 @@
+<div id="display"></div>
+<script type="text/javascript" src="node_modules/web3/dist/web3.min.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+
+<link href="css/style.css" rel="stylesheet">
+<script>
+	window.addEventListener('load',function(){
+		$('#display').html('Please login to your Metamask plugin to access this page');
+		if(typeof web3!= 'undefined'){
+			web3 = new Web3(web3.currentProvider);
+		}
+		else{
+			web3= new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
+			}
+			var account = web3.eth.accounts[0];
+			var accountInterval=setInterval(function(){
+				if(web3.eth.accounts[0]!==account){
+					account=web3.eth.accounts[0];
+					
+					$.getJSON('accountstore.json',function(data){
+						for(i=0;i<data.length;i++){
+					if(account==data[i].accountaddress.toLowerCase()){
+						getInfo(account);
+
+					}else{
+						
+						$('#display').html('We are sorry!! you did not register to vote ');
+					}
+			
+				}
+				});
+
+				}
+			},100);
+		function getInfo(account) {
+
+		$('#display').html('');
+		$('#display').append('<div id="header"><h1>ELECTRONIC VOTING SYSTEM</h1><div id="profile">&nbsp&nbsp&nbsp&nbsp&nbsp&nbspWelcome<br><br>'+account+'</div></div><div id="main_body"></div>');
+		
+
+
+	}
+
+	});
+	</script>
