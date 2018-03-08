@@ -1,8 +1,11 @@
 <div id="display"></div>
-<script type="text/javascript" src="node_modules/web3/dist/web3.min.js"></script>
-<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="../node_modules/web3/dist/web3.min.js"></script>
+<script type="text/javascript" src="../node_modules/truffle-contract/dist/truffle-contract.js"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/positionoption.js"></script>
+<script type="text/javascript" src="js/positionoption1.js"></script>
 
-<link href="css/style.css" rel="stylesheet">
+<link href="css/style1.css" rel="stylesheet">
 <script>
 	window.addEventListener('load',function(){
 		$('#display').html('Please login to your Metamask plugin to access this page');
@@ -13,6 +16,7 @@
 			web3= new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
 			}
 			var account = web3.eth.accounts[0];
+		
 			var accountInterval=setInterval(function(){
 				if(web3.eth.accounts[0]!==account){
 					account=web3.eth.accounts[0];
@@ -22,12 +26,12 @@
 					if(account==data[i].accountaddress.toLowerCase()){
 						
 						getInfo(account);
+						break;
 
 					}else{
 						
 						$('#display').html('We are sorry!! you did not register to vote ');
 					}
-			
 				}
 				});
 
@@ -36,10 +40,27 @@
 		function getInfo(account) {
 
 		$('#display').html('');
-		$('#display').append('<div id="header"><h1>ELECTRONIC VOTING SYSTEM </h1><div id="profile">&nbsp&nbsp&nbsp&nbsp&nbsp&nbspWelcome<br><br>'+account+'</div></div><div id="main_body"></div>');
-		$('#main_body').append('<div id="sub_body"><input type="radio" id="selection"></div>');
-
+		$('#display').append('<div id="header"><h1>CAST YOUR VOTE </h1><div id="profile">&nbsp&nbsp&nbsp&nbsp&nbsp&nbspWelcome<br><br>'+account+'</div></div><div id="main_body1">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<br><button id="button1" onclick="executivebtn()"><h3>EXECUTIVE</h3></button> <div id="submain_body1" style="display:none"> <input type="radio" name="members" id="enone" class="members" value="none">none<br> <input type="radio" name="members" id="mem1" class="members" value="member1">member1<br> <input type="radio" name="members" id="mem2" class="members" value="member2">member2<br> <input type="radio" name="members" id="mem3" class="members" value="member3">member3<br> <input type="radio" name="members" id="mem4" class="members" value="member4">member4<br> </div></div>  <div id="main_body2"> <button id="button2" onclick="coordinatorbtn()"> <h3>COORDINATOR</h3></button><br> <div id="submain_body2" style="display:none"> <input type="radio" name="persons" id="cnone" class="persons" value="none">none<br> <input type="radio" name="persons" id="per1" class="persons" value="member1">member1<br> <input type="radio" name="persons" id="per2" class="persons" value="member2">member2<br> <input type="radio" name="persons" id="per3" class="persons" value="member3">member3<br> <input type="radio" name="persons" id="per4" class="persons" value="member4">member4<br> </div><input type="button" onclick="cast_vote()" value="Cast a vote"></div>');
+		
 	}
+
 	});
+	function cast_vote(){
+		$.getJSON('voting.json', function(data) {
+  
+  var votingArtifact = data;
+  
+   var voting_contract=TruffleContract(data);
+ voting_contract.setProvider(web3);
+ voting_contract.deployed().then(function(instance){
+ 	instance.increase.call().then(function(val){
+ 				alert(val);
+ 	});
+ 
+  });
+
+  
+});
+	}
 	</script>
 	
