@@ -1,0 +1,120 @@
+<div id="display"></div>
+<script type="text/javascript" src="js/web3.min.js"></script>
+<script type="text/javascript" src="js/truffle-contract.js"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/positionoption.js"></script>
+<script type="text/javascript" src="js/positionoption1.js"></script>
+
+
+<script type="text/javascript" src="js/Chart_Bar.js"></script>
+<script type="text/javascript" src="js/controller_bar.js"></script>
+
+<script type="text/javascript" src="js/Chart_bundle_min.js"></script>
+
+<link href="css/view.css" rel="stylesheet">
+<script>
+var count=[];
+	window.addEventListener('load',function(){
+		$('#display').html('Please login to your Metamask plugin to access this page');
+		if(typeof web3!= 'undefined'){
+			web3 = new Web3(web3.currentProvider);
+		}
+		else{
+			web3= new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
+			}
+			var account = web3.eth.accounts[0];
+			var accountInterval=setInterval(function(){
+				if(web3.eth.accounts[0]!==account){
+					account=web3.eth.accounts[0];
+					
+					$.getJSON('accountstore.json',function(data){
+						for(i=0;i<data.length;i++){
+					if(account==data[i].accountaddress.toLowerCase()){
+						getInfo(account);
+						break;
+
+					}else{
+						
+						$('#display').html('We are sorry!! you did not register to vote ');
+					}
+			
+				}
+				});
+
+				}
+			},100);
+		});
+		function getInfo(account) {
+			
+			
+		$('#display').html('');
+		$('#display').append('<div id="header"><h1>ELECTRONIC VOTING SYSTEM</h1><div id="profile">&nbsp&nbsp&nbsp&nbsp&nbsp&nbspWelcome<br><br>'+account+'</div></div><canvas id="myChart" width="100px" height="100px"></canvas>');
+			$.getJSON('voting.json',function(data){
+				voting_contract=TruffleContract(data);
+ 		voting_contract.setProvider(web3.currentProvider);
+			voting_contract.deployed().then(function(instance){
+				for(var id=0;id<5;id++){
+			 				instance.getvalue(id).then(function(val){
+			 				func(val,id);
+			 				
+			 			});
+			 			
+			 		}
+			 		
+			 				});
+			 		 });
+			getchart();			
+			
+			
+		}
+		function getchart(){
+			var ctx = document.getElementById("myChart");
+ctx.height=0.001;
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ["None", "Member1", "Member2", "Member3", "Member4"],
+        datasets: [{
+            label: '# of Votes',
+            data: [1, 2, 5,0, 3],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)'
+          
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
+                
+            ],
+            borderWidth: 2
+        }]
+    },
+    options: {
+	       responsive:true,
+       maintainAspectRatio: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+		}
+	function func(values,id){
+		count[id]=values;
+		
+			alert(count[id]);
+		
+	}
+
+	
+	</script>
